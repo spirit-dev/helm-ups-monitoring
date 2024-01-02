@@ -1,0 +1,7 @@
+apiVersion: spirit-dev.net/v1
+kind: UpsStatus
+metadata:
+  name: cyberpower-status
+spec:
+  upsName: cyberpower
+  upsStatus: ONLINE
