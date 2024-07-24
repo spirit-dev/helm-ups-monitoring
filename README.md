@@ -1,5 +1,7 @@
 # ups-monitoring
 
+[![App Status](https://argocd-internal.spirit-dev.net/api/badge?name=ups-monitoring-turingpi&revision=true&showAppName=true)](https://argocd-internal.spirit-dev.net/applications/ups-monitoring-turingpi)
+
 ## Table of content
 
 - [ups-monitoring](#ups-monitoring)

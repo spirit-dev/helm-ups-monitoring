@@ -1,7 +1,37 @@
-apiVersion: spirit-dev.net/v1
+apiVersion: spirit-dev.net/v2
 kind: UpsStatus
 metadata:
-  name: cyberpower-status
+  name: cp1500pfclcda-status
+  namespace: monitoring
 spec:
-  upsName: cyberpower
-  upsStatus: ONLINE
+  battery:
+    charge:
+      current: x
+      low: x
+      warning: x
+    runtime:
+      current: x
+      low: x
+    voltage:
+      current: x
+      nominal: x
+  device:
+    model: x
+    serial: x
+  input:
+    voltage:
+      current: x
+      nominal: x
+  output:
+    voltage:
+      current: x
+  ups:
+    delay:
+      shutdown: x
+      start: x
+    load: x
+    status: OL
+  transition:
+    last_sync:
+    last_ingestion:
+    ingested:
