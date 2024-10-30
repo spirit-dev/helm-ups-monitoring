@@ -4,9 +4,7 @@
 
 ## Table of content
 
-- [ups-monitoring](#ups-monitoring)
-  - [Table of content](#table-of-content)
-  - [Installation process](#installation-process)
+[[_TOC_]]
 
 ## Installation process
 
