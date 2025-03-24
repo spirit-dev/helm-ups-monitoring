@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+    {{- include "helm.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "helm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "helm.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "helm.serviceAccountName" . }}-sa
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-nut-listerner
+          securityContext:
+            {{- toYaml .Values.listener.securityContext | nindent 12 }}
+          image: "{{ .Values.listener.image.repository }}:{{ .Values.listener.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.listener.image.pullPolicy }}
+          env:
+            - name: SERIAL
+              value: {{ .Values.listener.serial | quote }}
+            - name: NAME
+              value: {{ .Values.listener.name | quote }}
+            - name: PRODUCER_HOST
+              value: {{ .Values.listener.producer_host | quote }}
+            - name: PRODUCER_PORT
+              value: {{ .Values.listener.producer_port | quote }}
+            - name: UPSC_POLL_INTERVAL
+              value: {{ .Values.listener.upsc_poll_interval | quote }}
+          ports:
+            - name: upsd
+              containerPort: 3493
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - 'upsc ups@localhost:3493 2>&1|grep -q stale && exit 1 || true'
+          resources:
+          {{- toYaml .Values.listener.resources | nindent 12 }}
+        - name: {{ .Chart.Name }}-nut-notifier
+          securityContext:
+            {{- toYaml .Values.notifier.securityContext | nindent 12 }}
+          image: "{{ .Values.notifier.image.repository }}:{{ .Values.notifier.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.notifier.image.pullPolicy }}
+          env:
+            - name: DISCORD_CHANNEL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-nut-notifier
+                  key: discord-channel
+            - name: DISCORD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-nut-notifier
+                  key: discord-token
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 5000
+              hostPort: 5000
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - 'curl http://localhost:5000/liveness'
+            initialDelaySeconds: 15
+            periodSeconds: 120
+          resources:
+            {{- toYaml .Values.notifier.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
