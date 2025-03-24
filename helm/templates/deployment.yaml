@@ -32,20 +32,20 @@ spec:
       containers:
         - name: {{ .Chart.Name }}-nut-listerner
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository.nut_listerner }}:{{ .Values.image.tag.nut_listerner | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- toYaml .Values.listener.securityContext | nindent 12 }}
+          image: "{{ .Values.listener.image.repository }}:{{ .Values.listener.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.listener.image.pullPolicy }}
           env:
             - name: SERIAL
-              value: {{ .Values.nut_listener.serial | quote }}
+              value: {{ .Values.listener.serial | quote }}
             - name: NAME
-              value: {{ .Values.nut_listener.name | quote }}
+              value: {{ .Values.listener.name | quote }}
             - name: PRODUCER_HOST
-              value: {{ .Values.nut_listener.producer_host | quote }}
+              value: {{ .Values.listener.producer_host | quote }}
             - name: PRODUCER_PORT
-              value: {{ .Values.nut_listener.producer_port | quote }}
+              value: {{ .Values.listener.producer_port | quote }}
             - name: UPSC_POLL_INTERVAL
-              value: {{ .Values.nut_listener.upsc_poll_interval | quote }}
+              value: {{ .Values.listener.upsc_poll_interval | quote }}
           ports:
             - name: upsd
               containerPort: 3493
@@ -57,12 +57,12 @@ spec:
               - -c
               - 'upsc ups@localhost:3493 2>&1|grep -q stale && exit 1 || true'
           resources:
-          {{- toYaml .Values.resources | nindent 12 }}
+          {{- toYaml .Values.listener.resources | nindent 12 }}
         - name: {{ .Chart.Name }}-nut-notifier
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository.nut_notifier }}:{{ .Values.image.tag.nut_notifier | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- toYaml .Values.notifier.securityContext | nindent 12 }}
+          image: "{{ .Values.notifier.image.repository }}:{{ .Values.notifier.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.notifier.image.pullPolicy }}
           env:
             - name: DISCORD_CHANNEL
               valueFrom:
@@ -88,7 +88,7 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 120
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.notifier.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
