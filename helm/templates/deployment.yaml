@@ -78,7 +78,6 @@ spec:
             - name: http
               protocol: TCP
               containerPort: 5000
-              hostPort: 5000
           livenessProbe:
             exec:
               command:
