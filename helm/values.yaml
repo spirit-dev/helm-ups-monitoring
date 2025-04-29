@@ -65,7 +65,7 @@ notifier:
     #   cpu: 100m
     #   memory: 128Mi
 
-  serviceMonitor:
+  podMonitor:
     enabled: false
     scrapeInterval: 60s
 
