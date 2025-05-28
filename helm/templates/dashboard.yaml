@@ -33,7 +33,7 @@ data:
       "description": "UPS dashboard",
       "editable": true,
       "fiscalYearStartMonth": 0,
-      "graphTooltip": 0,
+      "graphTooltip": 1,
       "id": 106,
       "links": [],
       "panels": [
