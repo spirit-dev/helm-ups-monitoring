@@ -1,0 +1,191 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  # name must match the spec fields below, and be in the form: <plural>.<group>
+  name: upsstatuses.spirit-dev.net
+spec:
+  # group name to use for REST API: /apis/<group>/<version>
+  group: spirit-dev.net
+  # list of versions supported by this CustomResourceDefinition
+  versions:
+    - name: v2
+      # Each version can be enabled/disabled by Served flag.
+      served: true
+      # One and only one version must be marked as the storage version.
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-validations:
+                - rule: "has(self.ups.status)"
+                - rule: "has(self.battery.charge.current)"
+              properties:
+                battery:
+                  type: object
+                  properties:
+                    charge:
+                      type: object
+                      properties:
+                        current:
+                          type: string
+                        low:
+                          type: string
+                        warning:
+                          type: string
+                    runtime:
+                      type: object
+                      properties:
+                        current:
+                          type: string
+                        low:
+                          type: string
+                          nullable: true
+                    voltage:
+                      type: object
+                      properties:
+                        current:
+                          type: string
+                        nominal:
+                          type: string
+                          nullable: true
+                device:
+                  type: object
+                  properties:
+                    model:
+                      type: string
+                    serial:
+                      type: string
+                      nullable: true
+                input:
+                  type: object
+                  properties:
+                    voltage:
+                      type: object
+                      properties:
+                        current:
+                          type: string
+                          nullable: true
+                        nominal:
+                          type: string
+                          nullable: true
+                output:
+                  type: object
+                  properties:
+                    voltage:
+                      type: object
+                      properties:
+                        current:
+                          type: string
+                          nullable: true
+                ups:
+                  type: object
+                  properties:
+                    delay:
+                      type: object
+                      properties:
+                        shutdown:
+                          type: string
+                          nullable: true
+                        start:
+                          type: string
+                          nullable: true
+                    load:
+                      type: string
+                    realpower_nominal:
+                      type: string
+                      nullable: true
+                    serial:
+                      type: string
+                      nullable: true
+                    status:
+                      type: string
+                transition:
+                  type: object
+                  properties:
+                    last_sync:
+                      type: string
+                      format: date-time
+                    last_ingestion:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    ingested:
+                      type: boolean
+                      default: false
+
+      additionalPrinterColumns:
+        - name: Status
+          type: string
+          description: UPS status
+          jsonPath: .spec.ups.status
+        - name: Load
+          type: string
+          description: UPS load usage
+          jsonPath: .spec.ups.load
+        - name: Charge
+          type: string
+          description: Battery charge level
+          jsonPath: .spec.battery.charge.current
+        - name: OB runtime
+          type: string
+          description: On Battery remaining runtime
+          jsonPath: .spec.battery.runtime.current
+        - name: Ingested
+          type: boolean
+          description: Is the state ingested by scaling tooling
+          jsonPath: .spec.transition.ingested
+        - name: Last update
+          type: date
+          description: Last update of this resource
+          jsonPath: .spec.transition.last_sync
+
+    - name: v1
+      # Each version can be enabled/disabled by Served flag.
+      served: false
+      # One and only one version must be marked as the storage version.
+      storage: false
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              x-kubernetes-validations:
+                - rule: "has(self.upsStatus)"
+              properties:
+                upsName:
+                  type: string
+                upsSerial:
+                  type: string
+                  nullable: true
+                upsStatus:
+                  type: string
+                ingested:
+                  type: boolean
+                  default: false
+
+      additionalPrinterColumns:
+        - name: Status
+          type: string
+          description: UPS status
+          jsonPath: .spec.upsStatus
+        - name: Ingested
+          type: boolean
+          description: Is the state ingested by scaling tooling
+          jsonPath: .spec.ingested
+
+  # either Namespaced or Cluster
+  scope: Namespaced
+  names:
+    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
+    plural: upsstatuses
+    # singular name to be used as an alias on the CLI and for display
+    singular: upsstatus
+    # kind is normally the CamelCased singular type. Your resource manifests use this.
+    kind: UpsStatus
+    # shortNames allow shorter string to match your resource on the CLI
+    shortNames:
+      - upss
