@@ -2,7 +2,7 @@
 
 # Service
 NAMESPACE = monitoring
-RELEASE_NAME = ups-notifier
+RELEASE_NAME = ups-monitoring-turingpi
 # ENV ?= ### Specify the env to use
 ENV = turingpi
 pod := $$(kubectl get pods -n ${NAMESPACE} |  grep -m1 ${RELEASE_NAME} | cut -d' ' -f1)
