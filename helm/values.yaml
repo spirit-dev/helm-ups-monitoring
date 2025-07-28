@@ -70,6 +70,10 @@ notifier:
     scrapeInterval: 60s
 
 imagePullSecrets: []
+registry:
+  url:
+  username:
+  password:
 nameOverride: ""
 fullnameOverride: ""
 
