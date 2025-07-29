@@ -1,0 +1,12 @@
+{{- if .Values.createPullSecret }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gitlab-registry-key
+  namespace: {{ .Release.Namespace }}
+data:
+  {{- with .Values.registry }}
+  .dockerconfigjson: {{ printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\"}}}" .url .username .password | b64enc }}
+  {{- end }}
+type: kubernetes.io/dockerconfigjson
+{{- end }}
