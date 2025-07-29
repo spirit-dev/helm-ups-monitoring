@@ -69,6 +69,10 @@ notifier:
     enabled: false
     scrapeInterval: 60s
 
+  discord:
+    channel: ""
+    token: ""
+
 imagePullSecrets: []
 registry:
   url:
