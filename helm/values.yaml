@@ -129,3 +129,4 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+# priorityClassName: monitoring-high
