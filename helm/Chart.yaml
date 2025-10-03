@@ -1,0 +1,22 @@
+apiVersion: v2
+name: ups-monitoring
+description: A Helm chart that listen for USB conencted UPS and send notification to kubernetes
+
+home: https://gitlab-internal.spirit-dev.net/infrastructure/helm/ups-monitoring
+sources:
+  - https://gitlab-internal.spirit-dev.net/infrastructure/helm/ups-monitoring
+  - https://gitlab-internal.spirit-dev.net/scripts/nut-producer
+  - https://gitlab-internal.spirit-dev.net/infrastructure/docker/nut
+
+type: application
+
+# Note: This is a custom internal chart without external dependencies
+version: 1.0.5
+
+# Note: This is a custom internal application
+appVersion: "1.0.0"
+
+keywords:
+  - ups
+  - monitoring
+  - discord
